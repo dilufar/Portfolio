@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projects — Dilufar Ilhomjonova</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --ink: #0a0a0a;
+        --ivory: #f5f3ef;
+        --glass: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --accent: #c9b99a;
+        --muted: rgba(255, 255, 255, 0.35);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--ink);
+        color: var(--ivory);
+        font-family: "DM Sans", sans-serif;
+        font-weight: 300;
+        overflow-x: hidden;
+        cursor: none;
+      }
+
+      .cursor {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        mix-blend-mode: difference;
+      }
+      .cursor-ring {
+        position: fixed;
+        width: 36px;
+        height: 36px;
+        border: 1px solid rgba(201, 185, 154, 0.5);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9998;
+        transition: all 0.3s ease;
+      }
+
+      .bg-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .code-char {
+        position: absolute;
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        color: rgba(201, 185, 154, 0.05);
+        animation: floatUp linear infinite;
+        white-space: nowrap;
+      }
+      .float-icon {
+        position: absolute;
+        font-size: clamp(14px, 2vw, 22px);
+        color: rgba(201, 185, 154, 0.06);
+        animation: floatIcon ease-in-out infinite;
+        pointer-events: none;
+      }
+      @keyframes floatUp {
+        0% {
+          transform: translateY(110vh);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateY(-10vh);
+          opacity: 0;
+        }
+      }
+      @keyframes floatIcon {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-18px) rotate(5deg);
+        }
+      }
+
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding: 1.5rem 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(10, 10, 10, 0.7);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-logo {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        color: var(--ivory);
+        text-decoration: none;
+      }
+      .nav-logo span {
+        color: var(--accent);
+      }
+      .back-link {
+        font-family: "Space Mono", monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        transition: color 0.3s ease;
+      }
+      .back-link:hover {
+        color: var(--accent);
+      }
+
+      .page-hero {
+        padding: 12rem 2.5rem 5rem;
+        max-width: 1100px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+      .section-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 1rem;
+      }
+      .h-line {
+        width: 60px;
+        height: 1px;
+        background: rgba(201, 185, 154, 0.3);
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 0.75rem;
+      }
+      .page-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(3rem, 8vw, 7rem);
+        font-weight: 300;
+        line-height: 0.95;
+        color: var(--ivory);
+      }
+      .page-title em {
+        font-style: italic;
+        color: var(--accent);
+      }
+
+      .projects-section {
+        position: relative;
+        z-index: 1;
+        padding: 2rem 2.5rem 8rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      /* Featured project (large card) */
+      .featured-card {
+        border: 1px solid var(--border);
+        background: var(--glass);
+        padding: 3rem;
+        margin-bottom: 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .featured-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 0;
+        background: var(--accent);
+        transition: height 0.4s ease;
+      }
+      .featured-card:hover {
+        background: rgba(201, 185, 154, 0.04);
+        transform: translateY(-3px);
+      }
+      .featured-card:hover::before {
+        height: 100%;
+      }
+
+      .fc-mock {
+        aspect-ratio: 16/10;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .fc-mock-inner {
+        width: 80%;
+        height: 80%;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 1rem;
+      }
+      .mock-bar {
+        height: 6px;
+        background: rgba(201, 185, 154, 0.15);
+        border-radius: 99px;
+      }
+      .mock-bar.accent {
+        background: rgba(201, 185, 154, 0.4);
+        width: 60%;
+      }
+      .mock-bar.sm {
+        width: 80%;
+        height: 4px;
+      }
+      .mock-bar.xs {
+        width: 50%;
+        height: 4px;
+      }
+      .mock-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        margin-top: 8px;
+      }
+      .mock-cell {
+        height: 30px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 2px;
+      }
+
+      .fc-badge {
+        font-family: "Space Mono", monospace;
+        font-size: 0.55rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--accent);
+        border: 1px solid rgba(201, 185, 154, 0.3);
+        padding: 0.3rem 0.7rem;
+        display: inline-block;
+        margin-bottom: 1rem;
+      }
+      .fc-num {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 5rem;
+        font-weight: 300;
+        color: rgba(201, 185, 154, 0.08);
+        line-height: 1;
+        position: absolute;
+        top: 2rem;
+        right: 2.5rem;
+      }
+      .fc-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 2.2rem;
+        font-weight: 300;
+        color: var(--ivory);
+        margin-bottom: 1rem;
+        line-height: 1.1;
+      }
+      .fc-desc {
+        font-size: 0.88rem;
+        line-height: 1.8;
+        color: var(--muted);
+        margin-bottom: 1.5rem;
+      }
+      .fc-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-bottom: 1.5rem;
+      }
+      .tag {
+        font-family: "Space Mono", monospace;
+        font-size: 0.55rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 0.3rem 0.7rem;
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+      .fc-links {
+        display: flex;
+        gap: 1rem;
+      }
+      .fc-btn {
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 0.7rem 1.4rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+      }
+      .fc-btn.primary {
+        background: var(--accent);
+        color: var(--ink);
+      }
+      .fc-btn.primary:hover {
+        background: var(--ivory);
+      }
+      .fc-btn.secondary {
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+      .fc-btn.secondary:hover {
+        color: var(--ivory);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Grid cards (smaller) */
+      .grid-projects {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+      .project-card {
+        border: 1px solid var(--border);
+        background: var(--glass);
+        padding: 2rem 1.8rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .project-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 35px 35px 0;
+        border-color: transparent var(--accent) transparent transparent;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .project-card:hover {
+        background: rgba(201, 185, 154, 0.04);
+        transform: translateY(-4px);
+      }
+      .project-card:hover::after {
+        opacity: 0.25;
+      }
+      .pc-num {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 2.5rem;
+        font-weight: 300;
+        color: rgba(201, 185, 154, 0.1);
+        line-height: 1;
+        margin-bottom: 0.8rem;
+      }
+      .pc-icon {
+        font-size: 1.5rem;
+        color: rgba(201, 185, 154, 0.4);
+        margin-bottom: 0.8rem;
+      }
+      .pc-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.3rem;
+        font-weight: 400;
+        color: var(--ivory);
+        margin-bottom: 0.5rem;
+      }
+      .pc-desc {
+        font-size: 0.8rem;
+        line-height: 1.7;
+        color: var(--muted);
+        margin-bottom: 1rem;
+      }
+      .pc-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 2rem 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        z-index: 1;
+      }
+      footer p {
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        color: rgba(255, 255, 255, 0.2);
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 900px) {
+        .featured-card {
+          grid-template-columns: 1fr;
+        }
+        .fc-mock {
+          display: none;
+        }
+        .grid-projects {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 600px) {
+        nav {
+          padding: 1.2rem 1.5rem;
+        }
+        .grid-projects {
+          grid-template-columns: 1fr;
+        }
+        .page-hero {
+          padding: 9rem 1.5rem 3rem;
+        }
+        .projects-section {
+          padding: 1rem 1.5rem 5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="bg-canvas" id="bgCanvas"></div>
+
+    <nav>
+      <a href="index.html" class="nav-logo">Dilufar Ilhomjonova</a>
+      <a href="index.html" class="back-link"
+        ><i class="fa-solid fa-arrow-left"></i> Back to portfolio</a
+      >
+    </nav>
+
+    <div class="page-hero">
+      <h1 class="page-title"><em>Projects</em></h1>
+    </div>
+
+    <div class="projects-section">
+      <!-- Featured Project 1 -->
+      <div class="featured-card">
+        <div style="position: relative">
+          <div class="fc-badge">Featured · 2026</div>
+          <div class="fc-num">01</div>
+          <h2 class="fc-title">Personal Portfolio Website</h2>
+          <p class="fc-desc">
+            A fully responsive personal portfolio built with pure HTML, CSS, and
+            Tailwind CSS. Features smooth scroll animations, custom cursor,
+            floating background elements, and a dark minimalist aesthetic.
+            Designed to showcase skills and projects in a visually striking
+            manner.
+          </p>
+          <div class="fc-tags">
+            <span class="tag">HTML5</span><span class="tag">CSS3</span
+            ><span class="tag">Tailwind CSS</span
+            ><span class="tag">UI Design</span>
+          </div>
+          <div class="fc-links">
+            <a href="#" class="fc-btn primary"
+              ><i class="fa-solid fa-eye"></i> Live Demo</a
+            >
+            <a href="#" class="fc-btn secondary"
+              ><i class="fa-brands fa-github"></i> GitHub</a
+            >
+          </div>
+        </div>
+        <div class="fc-mock">
+          <div class="fc-mock-inner">
+            <div class="mock-bar accent"></div>
+            <div class="mock-bar sm"></div>
+            <div class="mock-bar xs"></div>
+            <div class="mock-grid">
+              <div class="mock-cell"></div>
+              <div class="mock-cell"></div>
+              <div class="mock-cell"></div>
+              <div class="mock-cell"></div>
+            </div>
+            <div class="mock-bar" style="margin-top: 8px; width: 70%"></div>
+            <div class="mock-bar xs"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Project 2 -->
+      <div class="featured-card">
+        <div style="position: relative">
+          <div class="fc-badge">Full-Stack · 2026</div>
+          <div class="fc-num">02</div>
+          <h2 class="fc-title">E-Commerce Platform</h2>
+          <p class="fc-desc">
+            A complete full-stack online shopping platform with product catalog,
+            search & filter functionality, shopping cart, user authentication
+            (JWT), and Stripe payment integration. Includes admin dashboard for
+            inventory management and order tracking.
+          </p>
+          <div class="fc-tags">
+            <span class="tag">Next.js</span><span class="tag">TypeScript</span
+            ><span class="tag">Node.js</span><span class="tag">MongoDB</span
+            ><span class="tag">Stripe</span>
+          </div>
+          <div class="fc-links">
+            <a href="#" class="fc-btn primary"
+              ><i class="fa-solid fa-eye"></i> Live Demo</a
+            >
+            <a href="#" class="fc-btn secondary"
+              ><i class="fa-brands fa-github"></i> GitHub</a
+            >
+          </div>
+        </div>
+        <div class="fc-mock">
+          <div class="fc-mock-inner">
+            <div class="mock-bar accent" style="width: 40%"></div>
+            <div
+              class="mock-grid"
+              style="grid-template-columns: 1fr 1fr 1fr; margin-top: 12px"
+            >
+              <div class="mock-cell" style="height: 50px"></div>
+              <div class="mock-cell" style="height: 50px"></div>
+              <div class="mock-cell" style="height: 50px"></div>
+            </div>
+            <div class="mock-bar sm" style="margin-top: 10px"></div>
+            <div class="mock-bar xs"></div>
+            <div
+              class="mock-bar accent"
+              style="
+                width: 30%;
+                margin-top: 10px;
+                height: 20px;
+                border-radius: 2px;
+              "
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid of remaining 8 projects -->
+      <div class="grid-projects">
+        <div class="project-card">
+          <div class="pc-num">03</div>
+          <div class="pc-icon"><i class="fa-solid fa-list-check"></i></div>
+          <h3 class="pc-title">Task Manager App</h3>
+          <p class="pc-desc">
+            Kanban-style project management tool with drag & drop boards,
+            real-time updates, team assignments, priority labels, deadlines, and
+            progress tracking. Supports multiple workspaces per user.
+          </p>
+          <div class="pc-tags">
+            <span class="tag">React</span><span class="tag">TypeScript</span
+            ><span class="tag">Tailwind</span><span class="tag">WebSocket</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="pc-num">04</div>
+          <div class="pc-icon"><i class="fa-solid fa-cloud-sun"></i></div>
+          <h3 class="pc-title">Weather Dashboard</h3>
+          <p class="pc-desc">
+            Real-time weather tracking application with interactive charts,
+            7-day forecasts, hourly breakdowns, and geolocation. Uses
+            OpenWeatherMap API with beautiful animated weather icons.
+          </p>
+          <div class="pc-tags">
+            <span class="tag">JavaScript</span><span class="tag">REST API</span
+            ><span class="tag">CSS3</span><span class="tag">Chart.js</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="pc-num">05</div>
+          <div class="pc-icon"><i class="fa-solid fa-pen-nib"></i></div>
+          <h3 class="pc-title">Blog Platform</h3>
+          <p class="pc-desc">
+            Markdown-powered blog with a custom CMS, category tags, full-text
+            search, comments section, and auto-generated RSS feed. Statically
+            generated with ISR for optimal SEO performance.
+          </p>
+          <div class="pc-tags">
+            <span class="tag">Next.js</span><span class="tag">MDX</span
+            ><span class="tag">Tailwind</span><span class="tag">Prisma</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="pc-num">06</div>
+          <div class="pc-icon"><i class="fa-solid fa-camera"></i></div>
+          <h3 class="pc-title">Social Media Clone</h3>
+          <p class="pc-desc">
+            Instagram-inspired platform with photo & reel uploads, stories,
+            likes, comments, DMs, followers system, and explore page. Features
+            infinite scroll and real-time notifications.
+          </p>
+          <div class="pc-tags">
+            <span class="tag">React</span><span class="tag">Node.js</span
+            ><span class="tag">MongoDB</span><span class="tag">Socket.io</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="pc-num">07</div>
+
+          <div class="pc-icon"><i class="fa-solid fa-robot"></i></div>
+          <h3 class="pc-title">AI Chat Assistant</h3>
+          <p class="pc-desc">
+            Conversational AI chatbot powered by OpenAI API with streaming
+            responses, conversation history, multiple chat sessions, custom
+            system prompts, and markdown rendering.
+          </p>
+          <div class="pc-tags">
+            <span class="tag">Next.js</span><span class="tag">OpenAI</span
+            ><span class="tag">TypeScript</span
+            ><span class="tag">Tailwind</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="pc-num">08</div>
+          <div class="pc-icon"><i class="fa-solid fa-coins"></i></div>
+          <h3 class="pc-title">Crypto Tracker</h3>
+          <p class="pc-desc">
+            Real-time cryptocurrency portfolio tracker with live price updates
+            via WebSocket, portfolio value calculation, interactive candlestick
+            charts, and price alert notifications.
+          </p>
+          <div class="pc-tags">
+            <span class="tag">React</span><span class="tag">TypeScript</span
+            ><span class="tag">WebSocket</span><span class="tag">Recharts</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="pc-num">09</div>
+          <div class="pc-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+          <h3 class="pc-title">Online Learning Platform</h3>
+          <p class="pc-desc">
+            Education platform with video course streaming, progress tracking,
+            quizzes, certificates, instructor dashboard, and student analytics.
+            Supports course reviews and enrollment management.
+          </p>
+          <div class="pc-tags">
+            <span class="tag">Next.js</span><span class="tag">Node.js</span
+            ><span class="tag">PostgreSQL</span><span class="tag">AWS S3</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="pc-num">10</div>
+          <div class="pc-icon"><i class="fa-solid fa-utensils"></i></div>
+          <h3 class="pc-title">Recipe Finder App</h3>
+          <p class="pc-desc">
+            Smart recipe search and bookmarking app with ingredient-based
+            filtering, nutritional info, step-by-step cooking mode, serving size
+            calculator, and personal cookbook collection.
+          </p>
+          <div class="pc-tags">
+            <span class="tag">React</span><span class="tag">JavaScript</span
+            ><span class="tag">Spoonacular API</span
+            ><span class="tag">Tailwind</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2026 Dilufar Ilhomjonova</p>
+      <p>Full-Stack Developer</p>
+    </footer>
+
+    <script>
+      const cursor = document.getElementById("cursor");
+      const ring = document.getElementById("cursorRing");
+      let mx = 0,
+        my = 0,
+        rx = 0,
+        ry = 0;
+      document.addEventListener("mousemove", (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+        cursor.style.left = mx - 4 + "px";
+        cursor.style.top = my - 4 + "px";
+      });
+      function animateRing() {
+        rx += (mx - rx) * 0.12;
+        ry += (my - ry) * 0.12;
+        ring.style.left = rx - 18 + "px";
+        ring.style.top = ry - 18 + "px";
+        requestAnimationFrame(animateRing);
+      }
+      animateRing();
+      document
+        .querySelectorAll("a, .project-card, .featured-card")
+        .forEach((el) => {
+          el.addEventListener("mouseenter", () => {
+            cursor.style.transform = "scale(3)";
+            ring.style.opacity = "0";
+          });
+          el.addEventListener("mouseleave", () => {
+            cursor.style.transform = "scale(1)";
+            ring.style.opacity = "1";
+          });
+        });
+
+      const canvas = document.getElementById("bgCanvas");
+      const chars = [
+        "<div>",
+        "</>",
+        "{...}",
+        "=>",
+        "const",
+        "import",
+        "return",
+        "useState",
+        "async",
+        ".map()",
+        "fetch",
+        "await",
+        "{}",
+        "[]",
+        "npm",
+      ];
+      for (let i = 0; i < 25; i++) {
+        const el = document.createElement("div");
+        el.className = "code-char";
+        el.textContent = chars[Math.floor(Math.random() * chars.length)];
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.animationDuration = 18 + Math.random() * 25 + "s";
+        el.style.animationDelay = -Math.random() * 30 + "s";
+        canvas.appendChild(el);
+      }
+      const iconData = [
+        { icon: "fa-brands fa-html5", x: 8, y: 15 },
+        { icon: "fa-brands fa-react", x: 85, y: 20 },
+        { icon: "fa-brands fa-js", x: 5, y: 60 },
+        { icon: "fa-solid fa-code", x: 92, y: 55 },
+        { icon: "fa-brands fa-github", x: 50, y: 8 },
+        { icon: "fa-solid fa-terminal", x: 3, y: 80 },
+        { icon: "fa-solid fa-database", x: 95, y: 75 },
+      ];
+      iconData.forEach((d, i) => {
+        const el = document.createElement("i");
+        el.className = "float-icon " + d.icon;
+        el.style.left = d.x + "vw";
+        el.style.top = d.y + "vh";
+        el.style.animationDuration = 4 + i * 0.7 + "s";
+        el.style.animationDelay = i * 0.4 + "s";
+        canvas.appendChild(el);
+      });
+    </script>
+  </body>
+</html>
