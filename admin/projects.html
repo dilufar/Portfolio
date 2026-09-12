@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Projects Management — Admin</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --ink: #0a0a0a;
+        --ivory: #f5f3ef;
+        --glass: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --accent: #c9b99a;
+        --muted: rgba(255, 255, 255, 0.35);
+        --danger: #b87878;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: var(--ink);
+        color: var(--ivory);
+        font-family: "DM Sans", sans-serif;
+        font-weight: 300;
+        min-height: 100vh;
+      }
+
+      /* =========================
+       LAYOUT
+    ========================= */
+
+      .admin-wrapper {
+        min-height: 100vh;
+        display: flex;
+      }
+
+      /* =========================
+       SIDEBAR
+    ========================= */
+
+      .sidebar {
+        width: 260px;
+        min-height: 100vh;
+        border-right: 1px solid var(--border);
+        background: rgba(10, 10, 10, 0.9);
+        backdrop-filter: blur(20px);
+        padding: 2rem 1.5rem;
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+      }
+
+      .logo {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--ivory);
+        text-decoration: none;
+        display: block;
+        padding: 0.5rem;
+      }
+
+      .logo span {
+        color: var(--accent);
+      }
+
+      .admin-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.55rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent);
+        padding: 0 0.5rem;
+        margin: 0.5rem 0 2rem;
+      }
+
+      .sidebar-menu {
+        list-style: none;
+      }
+
+      .sidebar-menu li {
+        margin-bottom: 0.5rem;
+      }
+
+      .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding: 0.9rem 1rem;
+        text-decoration: none;
+        color: var(--muted);
+        border: 1px solid transparent;
+        transition: 0.3s;
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .sidebar-menu a i {
+        width: 18px;
+        text-align: center;
+        color: var(--accent);
+      }
+
+      .sidebar-menu a:hover,
+      .sidebar-menu a.active {
+        color: var(--ivory);
+        border-color: var(--border);
+        background: var(--glass);
+      }
+
+      .sidebar-bottom {
+        position: absolute;
+        left: 1.5rem;
+        right: 1.5rem;
+        bottom: 2rem;
+      }
+
+      .back-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        text-decoration: none;
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        transition: 0.3s;
+      }
+
+      .back-btn:hover {
+        color: var(--ivory);
+        border-color: rgba(201, 185, 154, 0.4);
+      }
+
+      /* =========================
+       MAIN
+    ========================= */
+
+      .main {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        padding: 3rem;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .topbar-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 0.5rem;
+      }
+
+      .topbar-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 300;
+      }
+
+      .topbar-title em {
+        color: var(--accent);
+      }
+
+      /* =========================
+       CONTENT
+    ========================= */
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 1.5rem;
+      }
+
+      .panel {
+        border: 1px solid var(--border);
+        background: var(--glass);
+        padding: 2rem;
+      }
+
+      .panel-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.8rem;
+        font-weight: 400;
+        margin-bottom: 1.5rem;
+      }
+
+      /* =========================
+       FORM
+    ========================= */
+
+      .form-group {
+        margin-bottom: 1.2rem;
+      }
+
+      .panel-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.55rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--accent);
+        margin-bottom: 0.4rem;
+        display: block;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.025);
+        border: 1px solid var(--border);
+        color: var(--ivory);
+        padding: 0.9rem 1rem;
+        outline: none;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.85rem;
+      }
+
+      textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+
+      input:focus,
+      textarea:focus {
+        border-color: rgba(201, 185, 154, 0.5);
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: rgba(255, 255, 255, 0.2);
+      }
+
+      .form-buttons {
+        display: flex;
+        gap: 0.7rem;
+        margin-top: 1.5rem;
+      }
+
+      .btn {
+        padding: 0.8rem 1.2rem;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--ivory);
+        cursor: pointer;
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        transition: 0.3s;
+      }
+
+      .btn-primary {
+        color: var(--accent);
+        border-color: rgba(201, 185, 154, 0.35);
+      }
+
+      .btn:hover {
+        background: rgba(201, 185, 154, 0.08);
+      }
+
+      .btn-cancel {
+        display: none;
+      }
+
+      /* =========================
+       PROJECT CARDS
+    ========================= */
+
+      .project-card {
+        border: 1px solid var(--border);
+        padding: 1.3rem;
+        margin-bottom: 1rem;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .project-card:last-child {
+        margin-bottom: 0;
+      }
+
+      .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .project-name {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.5rem;
+      }
+
+      .project-id {
+        font-family: "Space Mono", monospace;
+        color: var(--accent);
+        font-size: 0.55rem;
+      }
+
+      .project-info {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        gap: 0.6rem;
+        font-size: 0.78rem;
+      }
+
+      .project-info span:nth-child(odd) {
+        color: var(--accent);
+        font-family: "Space Mono", monospace;
+        font-size: 0.55rem;
+        text-transform: uppercase;
+        padding-top: 0.2rem;
+      }
+
+      .project-info span:nth-child(even) {
+        color: var(--muted);
+        line-height: 1.5;
+        word-break: break-word;
+      }
+
+      .project-link {
+        color: var(--accent) !important;
+        text-decoration: none;
+      }
+
+      .project-link:hover {
+        text-decoration: underline;
+      }
+
+      .actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .action-btn {
+        padding: 0.55rem 0.8rem;
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        cursor: pointer;
+        font-family: "Space Mono", monospace;
+        font-size: 0.55rem;
+        text-transform: uppercase;
+        transition: 0.3s;
+      }
+
+      .edit-btn:hover {
+        color: var(--accent);
+        border-color: rgba(201, 185, 154, 0.4);
+      }
+
+      .delete-btn:hover {
+        color: var(--danger);
+        border-color: rgba(184, 120, 120, 0.4);
+      }
+
+      .empty {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--muted);
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+      }
+
+      /* =========================
+       RESPONSIVE
+    ========================= */
+
+      @media (max-width: 900px) {
+        .sidebar {
+          width: 220px;
+        }
+
+        .main {
+          margin-left: 220px;
+          width: calc(100% - 220px);
+          padding: 2rem;
+        }
+
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .admin-wrapper {
+          display: block;
+        }
+
+        .sidebar {
+          position: relative;
+          width: 100%;
+          min-height: auto;
+        }
+
+        .sidebar-bottom {
+          position: static;
+          margin-top: 2rem;
+        }
+
+        .main {
+          margin-left: 0;
+          width: 100%;
+          padding: 1.5rem;
+        }
+
+        .topbar {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 0.8rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="admin-wrapper">
+      <!-- SIDEBAR -->
+
+      <aside class="sidebar">
+        <a href="index.html" class="logo"> Dilufar <span>Admin</span> </a>
+
+        <div class="admin-label">Portfolio Management</div>
+
+        <ul class="sidebar-menu">
+          <li>
+            <a href="index.html">
+              <i class="fa-solid fa-chart-line"></i>
+              Dashboard
+            </a>
+          </li>
+
+          <li>
+            <a href="about.html">
+              <i class="fa-solid fa-user"></i>
+              About
+            </a>
+          </li>
+
+          <li>
+            <a href="skills.html">
+              <i class="fa-solid fa-code"></i>
+              Skills
+            </a>
+          </li>
+
+          <li>
+            <a href="projects.html" class="active">
+              <i class="fa-solid fa-folder-open"></i>
+              Projects
+            </a>
+          </li>
+
+          <li>
+            <a href="contact.html">
+              <i class="fa-solid fa-envelope"></i>
+              Contact
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-bottom">
+          <a href="../index.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Portfolio
+          </a>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <div class="topbar-label">Admin Panel / Projects</div>
+
+            <h1 class="topbar-title">Manage <em>Projects</em></h1>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <!-- FORM -->
+
+          <section class="panel">
+            <h2 class="panel-title" id="formTitle">Add Project</h2>
+
+            <form id="projectForm">
+              <input type="hidden" id="editId" />
+
+              <div class="form-group">
+                <label class="panel-label"> Project Name </label>
+
+                <input
+                  type="text"
+                  id="projectName"
+                  placeholder="Portfolio Website"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="panel-label"> Description </label>
+
+                <textarea
+                  id="projectDescription"
+                  placeholder="Write project description..."
+                  required
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="panel-label"> Technology </label>
+
+                <input
+                  type="text"
+                  id="projectTechnology"
+                  placeholder="HTML, CSS, JavaScript"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="panel-label"> Image </label>
+
+                <input
+                  type="text"
+                  id="projectImage"
+                  placeholder="images/project.jpg"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="panel-label"> Project Link </label>
+
+                <input
+                  type="text"
+                  id="projectLink"
+                  placeholder="https://example.com"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="panel-label"> GitHub Link </label>
+
+                <input
+                  type="text"
+                  id="githubLink"
+                  placeholder="https://github.com/username/project"
+                />
+              </div>
+
+              <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fa-solid fa-plus"></i>
+
+                  <span id="submitText"> Add Project </span>
+                </button>
+
+                <button type="button" class="btn btn-cancel" id="cancelBtn">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- READ -->
+
+          <section class="panel">
+            <h2 class="panel-title">Projects List</h2>
+
+            <div id="projectsList"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      /* =========================
+       ELEMENTS
+    ========================= */
+
+      const projectForm = document.getElementById("projectForm");
+
+      const editId = document.getElementById("editId");
+
+      const projectName = document.getElementById("projectName");
+
+      const projectDescription = document.getElementById("projectDescription");
+
+      const projectTechnology = document.getElementById("projectTechnology");
+
+      const projectImage = document.getElementById("projectImage");
+
+      const projectLink = document.getElementById("projectLink");
+
+      const githubLink = document.getElementById("githubLink");
+
+      const projectsList = document.getElementById("projectsList");
+
+      const formTitle = document.getElementById("formTitle");
+
+      const submitText = document.getElementById("submitText");
+
+      const cancelBtn = document.getElementById("cancelBtn");
+
+      /* =========================
+       GET PROJECTS
+    ========================= */
+
+      function getProjects() {
+        const data = localStorage.getItem("projects");
+
+        return data ? JSON.parse(data) : [];
+      }
+
+      /* =========================
+       SAVE PROJECTS
+    ========================= */
+
+      function saveProjects(data) {
+        localStorage.setItem("projects", JSON.stringify(data));
+      }
+
+      /* =========================
+       READ
+    ========================= */
+
+      function renderProjects() {
+        const projects = getProjects();
+
+        projectsList.innerHTML = "";
+
+        if (projects.length === 0) {
+          projectsList.innerHTML = `
+          <div class="empty">
+            No projects available.
+          </div>
+        `;
+
+          return;
+        }
+
+        projects.forEach((item) => {
+          const card = document.createElement("div");
+
+          card.className = "project-card";
+
+          card.innerHTML = `
+
+          <div class="project-header">
+
+            <div class="project-name">
+              ${item.name}
+            </div>
+
+            <div class="project-id">
+              ID: ${item.id}
+            </div>
+
+          </div>
+
+          <div class="project-info">
+
+            <span>Description</span>
+
+            <span>
+              ${item.description}
+            </span>
+
+            <span>Technology</span>
+
+            <span>
+              ${item.technology}
+            </span>
+
+            <span>Image</span>
+
+            <span>
+              ${item.image || "No image"}
+            </span>
+
+            <span>Project</span>
+
+            <span>
+              ${
+                item.projectLink
+                  ? `
+                    <a
+                      href="${item.projectLink}"
+                      target="_blank"
+                      class="project-link"
+                    >
+                      Open Project
+                    </a>
+                  `
+                  : "No link"
+              }
+            </span>
+
+            <span>GitHub</span>
+
+            <span>
+              ${
+                item.githubLink
+                  ? `
+                    <a
+                      href="${item.githubLink}"
+                      target="_blank"
+                      class="project-link"
+                    >
+                      Open GitHub
+                    </a>
+                  `
+                  : "No link"
+              }
+            </span>
+
+          </div>
+
+          <div class="actions">
+
+            <button
+              class="action-btn edit-btn"
+              onclick="editProject(${item.id})"
+            >
+
+              <i class="fa-solid fa-pen"></i>
+
+              Edit
+
+            </button>
+
+            <button
+              class="action-btn delete-btn"
+              onclick="deleteProject(${item.id})"
+            >
+
+              <i class="fa-solid fa-trash"></i>
+
+              Delete
+
+            </button>
+
+          </div>
+
+        `;
+
+          projectsList.appendChild(card);
+        });
+      }
+
+      /* =========================
+       CREATE + UPDATE
+    ========================= */
+
+      projectForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const projects = getProjects();
+
+        const currentId = Number(editId.value);
+
+        const data = {
+          id: currentId ? currentId : Date.now(),
+
+          name: projectName.value.trim(),
+
+          description: projectDescription.value.trim(),
+
+          technology: projectTechnology.value.trim(),
+
+          image: projectImage.value.trim(),
+
+          projectLink: projectLink.value.trim(),
+
+          githubLink: githubLink.value.trim(),
+        };
+
+        /* UPDATE */
+
+        if (currentId) {
+          const index = projects.findIndex((item) => item.id === currentId);
+
+          if (index !== -1) {
+            projects[index] = data;
+          }
+        } else {
+
+        /* CREATE */
+          projects.push(data);
+        }
+
+        saveProjects(projects);
+
+        renderProjects();
+
+        resetForm();
+      });
+
+      /* =========================
+       EDIT
+    ========================= */
+
+      function editProject(id) {
+        const projects = getProjects();
+
+        const item = projects.find((item) => item.id === id);
+
+        if (!item) return;
+
+        editId.value = item.id;
+
+        projectName.value = item.name;
+
+        projectDescription.value = item.description;
+
+        projectTechnology.value = item.technology;
+
+        projectImage.value = item.image;
+
+        projectLink.value = item.projectLink;
+
+        githubLink.value = item.githubLink;
+
+        formTitle.textContent = "Edit Project";
+
+        submitText.textContent = "Save Changes";
+
+        cancelBtn.style.display = "block";
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }
+
+      /* =========================
+       DELETE
+    ========================= */
+
+      function deleteProject(id) {
+        const confirmDelete = confirm(
+          "Are you sure you want to delete this project?",
+        );
+
+        if (!confirmDelete) return;
+
+        const projects = getProjects();
+
+        const filtered = projects.filter((item) => item.id !== id);
+
+        saveProjects(filtered);
+
+        renderProjects();
+
+        if (Number(editId.value) === id) {
+          resetForm();
+        }
+      }
+
+      /* =========================
+       RESET
+    ========================= */
+
+      function resetForm() {
+        projectForm.reset();
+
+        editId.value = "";
+
+        formTitle.textContent = "Add Project";
+
+        submitText.textContent = "Add Project";
+
+        cancelBtn.style.display = "none";
+      }
+
+      /* =========================
+       CANCEL
+    ========================= */
+
+      cancelBtn.addEventListener("click", resetForm);
+
+      /* =========================
+       START
+    ========================= */
+
+      renderProjects();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Admin Panel — Dilufar Ilhomjonova</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --ink: #0a0a0a;
+        --ivory: #f5f3ef;
+        --glass: rgba(255, 255, 255, 0.04);
+        --border: rgba(255, 255, 255, 0.08);
+        --accent: #c9b99a;
+        --muted: rgba(255, 255, 255, 0.35);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--ink);
+        color: var(--ivory);
+        font-family: "DM Sans", sans-serif;
+        font-weight: 300;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* =========================
+       BACKGROUND
+    ========================= */
+
+      .bg-canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .code-char {
+        position: absolute;
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        color: rgba(201, 185, 154, 0.05);
+        animation: floatUp linear infinite;
+        white-space: nowrap;
+      }
+
+      @keyframes floatUp {
+        0% {
+          transform: translateY(110vh);
+          opacity: 0;
+        }
+
+        10% {
+          opacity: 1;
+        }
+
+        90% {
+          opacity: 0.5;
+        }
+
+        100% {
+          transform: translateY(-10vh);
+          opacity: 0;
+        }
+      }
+
+      /* =========================
+       LAYOUT
+    ========================= */
+
+      .admin-wrapper {
+        min-height: 100vh;
+        display: flex;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* =========================
+       SIDEBAR
+    ========================= */
+
+      .sidebar {
+        width: 260px;
+        min-height: 100vh;
+        border-right: 1px solid var(--border);
+        background: rgba(10, 10, 10, 0.85);
+        backdrop-filter: blur(20px);
+        padding: 2rem 1.5rem;
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 10;
+      }
+
+      .logo {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--ivory);
+        text-decoration: none;
+        display: block;
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .logo span {
+        color: var(--accent);
+      }
+
+      .admin-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.55rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent);
+        padding: 0 0.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .sidebar-menu {
+        list-style: none;
+      }
+
+      .sidebar-menu li {
+        margin-bottom: 0.5rem;
+      }
+
+      .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding: 0.9rem 1rem;
+        text-decoration: none;
+        color: var(--muted);
+        border: 1px solid transparent;
+        transition: all 0.3s ease;
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .sidebar-menu a i {
+        width: 18px;
+        text-align: center;
+        color: var(--accent);
+      }
+
+      .sidebar-menu a:hover,
+      .sidebar-menu a.active {
+        color: var(--ivory);
+        border-color: var(--border);
+        background: var(--glass);
+      }
+
+      .sidebar-bottom {
+        position: absolute;
+        left: 1.5rem;
+        right: 1.5rem;
+        bottom: 2rem;
+      }
+
+      .back-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        padding: 0.8rem 1rem;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        text-decoration: none;
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+      }
+
+      .back-btn:hover {
+        color: var(--ivory);
+        border-color: rgba(201, 185, 154, 0.4);
+        background: rgba(201, 185, 154, 0.05);
+      }
+
+      /* =========================
+       MAIN
+    ========================= */
+
+      .main {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        min-height: 100vh;
+        padding: 3rem;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 1.5rem;
+        margin-bottom: 3rem;
+      }
+
+      .topbar-left {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+
+      .topbar-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      .topbar-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 300;
+        line-height: 1;
+      }
+
+      .topbar-title em {
+        color: var(--accent);
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        background: var(--accent);
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(201, 185, 154, 0.5);
+      }
+
+      /* =========================
+       DASHBOARD CARDS
+    ========================= */
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 3rem;
+      }
+
+      .dashboard-card {
+        border: 1px solid var(--border);
+        background: var(--glass);
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .dashboard-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 40px 40px 0;
+        border-color: transparent var(--accent) transparent transparent;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .dashboard-card:hover {
+        transform: translateY(-4px);
+        background: rgba(201, 185, 154, 0.04);
+      }
+
+      .dashboard-card:hover::after {
+        opacity: 0.25;
+      }
+
+      .card-number {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 3rem;
+        color: rgba(201, 185, 154, 0.1);
+        line-height: 1;
+        margin-bottom: 1rem;
+      }
+
+      .card-icon {
+        font-size: 1.5rem;
+        color: var(--accent);
+        margin-bottom: 1rem;
+      }
+
+      .card-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.5rem;
+        font-weight: 400;
+        margin-bottom: 0.5rem;
+      }
+
+      .card-text {
+        font-size: 0.8rem;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .manage-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1.3rem;
+        padding: 0.7rem 1rem;
+        border: 1px solid var(--border);
+        color: var(--accent);
+        background: transparent;
+        cursor: pointer;
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        text-decoration: none;
+      }
+
+      .manage-btn:hover {
+        background: rgba(201, 185, 154, 0.08);
+        border-color: rgba(201, 185, 154, 0.4);
+      }
+
+      /* =========================
+       INFO BOX
+    ========================= */
+
+      .info-box {
+        border-top: 1px solid var(--border);
+        padding-top: 2rem;
+      }
+
+      .info-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 1rem;
+      }
+
+      .info-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 2rem;
+        font-weight: 300;
+        margin-bottom: 0.8rem;
+      }
+
+      .info-text {
+        max-width: 700px;
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.8;
+      }
+
+      /* =========================
+       RESPONSIVE
+    ========================= */
+
+      @media (max-width: 900px) {
+        .sidebar {
+          width: 220px;
+        }
+
+        .main {
+          margin-left: 220px;
+          width: calc(100% - 220px);
+          padding: 2rem;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .sidebar {
+          position: relative;
+          width: 100%;
+          min-height: auto;
+          height: auto;
+          border-right: none;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-bottom {
+          position: static;
+          margin-top: 2rem;
+        }
+
+        .main {
+          margin-left: 0;
+          width: 100%;
+          padding: 2rem 1.5rem;
+        }
+
+        .admin-wrapper {
+          display: block;
+        }
+
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Background -->
+    <div class="bg-canvas" id="bgCanvas"></div>
+
+    <div class="admin-wrapper">
+      <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+      <aside class="sidebar">
+        <a href="../index.html" class="logo"> Dilufar <span>Admin</span> </a>
+
+        <div class="admin-label">Portfolio Management</div>
+
+        <ul class="sidebar-menu">
+          <li>
+            <a href="#" class="active">
+              <i class="fa-solid fa-chart-line"></i>
+              Dashboard
+            </a>
+          </li>
+
+          <li>
+            <a href="#about">
+              <i class="fa-solid fa-user"></i>
+              About
+            </a>
+          </li>
+
+          <li>
+            <a href="#skills">
+              <i class="fa-solid fa-code"></i>
+              Skills
+            </a>
+          </li>
+
+          <li>
+            <a href="#projects">
+              <i class="fa-solid fa-folder-open"></i>
+              Projects
+            </a>
+          </li>
+
+          <li>
+            <a href="#contact">
+              <i class="fa-solid fa-envelope"></i>
+              Contact
+            </a>
+          </li>
+        </ul>
+
+        <div class="sidebar-bottom">
+          <a href="../index.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Portfolio
+          </a>
+        </div>
+      </aside>
+
+      <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+      <main class="main">
+        <div class="topbar">
+          <div class="topbar-left">
+            <div class="topbar-label">Admin Panel / Dashboard</div>
+
+            <h1 class="topbar-title">Welcome to <em>Admin</em></h1>
+          </div>
+
+          <div class="status">
+            <span class="status-dot"></span>
+            System Ready
+          </div>
+        </div>
+
+        <!-- =========================
+           MANAGEMENT CARDS
+      ========================== -->
+
+        <div class="dashboard-grid">
+          <!-- ABOUT -->
+
+          <div class="dashboard-card" id="about">
+            <div class="card-number">01</div>
+
+            <div class="card-icon">
+              <i class="fa-solid fa-user"></i>
+            </div>
+
+            <h2 class="card-title">About</h2>
+
+            <p class="card-text">
+              Manage personal information, biography, experience and other
+              profile details.
+            </p>
+
+            <a href="about.html" class="manage-btn">
+              Manage About
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+
+          <!-- SKILLS -->
+
+          <div class="dashboard-card" id="skills">
+            <div class="card-number">02</div>
+
+            <div class="card-icon">
+              <i class="fa-solid fa-code"></i>
+            </div>
+
+            <h2 class="card-title">Skills</h2>
+
+            <p class="card-text">
+              Add, edit and delete technologies and programming skills.
+            </p>
+
+            <a href="skills.html" class="manage-btn">
+              Manage Skills
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+
+          <!-- PROJECTS -->
+
+          <div class="dashboard-card" id="projects">
+            <div class="card-number">03</div>
+
+            <div class="card-icon">
+              <i class="fa-solid fa-folder-open"></i>
+            </div>
+
+            <h2 class="card-title">Projects</h2>
+
+            <p class="card-text">
+              Create, update and delete portfolio projects and their
+              information.
+            </p>
+
+            <a href="projects.html" class="manage-btn">
+              Manage Projects
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+
+          <!-- CONTACT -->
+
+          <div class="dashboard-card" id="contact">
+            <div class="card-number">04</div>
+
+            <div class="card-icon">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+
+            <h2 class="card-title">Contact</h2>
+
+            <p class="card-text">
+              Manage email, phone, social media and other contact information.
+            </p>
+
+            <a href="contact.html" class="manage-btn">
+              Manage Contact
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- =========================
+           INFORMATION
+      ========================== -->
+
+        <div class="info-box">
+          <div class="info-label">Control Center</div>
+
+          <h2 class="info-title">Portfolio Management System</h2>
+
+          <p class="info-text">
+            This admin panel will be used to manage all portfolio content. Each
+            section will support full CRUD operations: Create, Read, Update and
+            Delete.
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <!-- =========================
+       BACKGROUND SCRIPT
+  ========================== -->
+
+    <script>
+      const canvas = document.getElementById("bgCanvas");
+
+      const chars = [
+        "<div>",
+        "</>",
+        "{...}",
+        "=>",
+        "const",
+        "import",
+        "return",
+        "useState",
+        "async",
+        ".map()",
+        "fetch",
+        "await",
+        "{}",
+        "[]",
+        "npm",
+        "CRUD",
+        "localStorage",
+      ];
+
+      for (let i = 0; i < 25; i++) {
+        const el = document.createElement("div");
+
+        el.className = "code-char";
+
+        el.textContent = chars[Math.floor(Math.random() * chars.length)];
+
+        el.style.left = Math.random() * 100 + "vw";
+
+        el.style.animationDuration = 18 + Math.random() * 25 + "s";
+
+        el.style.animationDelay = -Math.random() * 30 + "s";
+
+        canvas.appendChild(el);
+      }
+    </script>
+  </body>
+</html>
